@@ -1,10 +1,17 @@
 import userIcon from '../images/user.svg';
 import clockIcon from '../images/clock.svg';
 import emptyFolderIcon from '../images/empty-folder.svg';
+import Loader from '../images/loader-primary.svg';
 
 import '../styles/Feed.css';
 
 export default function Feed(props) {
+  if(props.isLoading) {
+    return (
+      <img src={Loader} alt="Loading" className='spin' />
+    )
+  }
+
   if (props.posts.length === 0) {
     return (
       <div className="feed-status">

@@ -1,10 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import Feed from '../components/Feed';
 import PostForm from '../components/PostForm';
 
 export default function Home() {
   const [posts, setPosts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(()=> {
+    fetch('http://localhost:3001/posts')
+      .then(async (response) => {
+        const body = await response.json()
+        setPosts(body.map((post) => ({
+          ...post,
+          publishedAt: new Date(post.publishedAt)
+        })))
+        setIsLoading(false)
+      })
+  }, [])
 
   function handleSubmit({ history, userName }) {
     setPosts([
@@ -24,6 +37,7 @@ export default function Home() {
       
       <main>
         <Feed
+          isLoading={isLoading}
           posts={posts}
           title="Seu Feed"
           subtitle="Acompanhe o que seus amigos estão pensando em tempo real"
