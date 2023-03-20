@@ -15,12 +15,13 @@ export default function PostForm(props) {
   const [errorMessage, setErrorMessage] = useState(null);
 
   async function handleSubmit(event) {
+    try{
     event.preventDefault();
 
     setIsLoading(true);
     setErrorMessage(null);
 
-    fetch('https://localhost:3001/posts',{
+    const response = await fetch('https://localhost:3001/posts',{
       method: 'POST',
       body: JSON.stringify({
         content: history,
@@ -30,27 +31,24 @@ export default function PostForm(props) {
         'Content-Type': 'application/json'
       }
     })
-    .then(async (response) => {
-      if(!response.ok){
-        const body = response.body()
-        
-        setErrorMessage(
-          errors[body.code] || 'Ocorreu um erro ao cadastrar o post!'
-        )
-        return;
-      }
-
-      props.onSubmit({ history, userName });
+    if(!response.ok){
+      const body = response.body()
       
-      setHistory('');
-      setUserName('');
-    })
-    .catch(()=>{
+      setErrorMessage(
+        errors[body.code] || 'Ocorreu um erro ao cadastrar o post!'
+      )
+      return;
+    }
+    
+    props.onSubmit({ history, userName });
+      
+    setHistory('');
+    setUserName('');
+    } catch {
       setErrorMessage("Ocorreu um erro ao cadastrar o post!");
-    })
-    .finally(()=>{
+    } finally {
       setIsLoading(false);
-    });
+    }
   }
 
   return (
